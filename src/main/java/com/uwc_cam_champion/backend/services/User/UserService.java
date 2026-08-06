@@ -1,21 +1,101 @@
 package com.uwc_cam_champion.backend.services.User;
 
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+
+import com.uwc_cam_champion.backend.exceptions.ResourceNotFoundException;
 import com.uwc_cam_champion.backend.models.User;
+import com.uwc_cam_champion.backend.models.Cam;
+import com.uwc_cam_champion.backend.repositories.UserRepository;
+import com.uwc_cam_champion.backend.repositories.CamRepository;
+import com.uwc_cam_champion.backend.request.user.*;
 
-public class UserService implements IUserService{
+
+@Service
+public class UserService implements IUserService {
+
+    private final UserRepository userRepository;
+    private final CamRepository camRepository;
+
+    public UserService(UserRepository userRepository, CamRepository camRepository) {
+        this.userRepository = userRepository;
+        this.camRepository = camRepository;
+    }
 
     @Override
-    public User createUser() {
-        return null;
-    };
+    public User createUser(CreateUserRequest request) {
+        try {
+            User user = createUserHelper(request);
+            User savedUser = userRepository.save(user);
+            
+            // Initialize Cam record with default values
+            Cam cam = new Cam(savedUser, BigDecimal.ZERO, new BigDecimal("50.00"), BigDecimal.ZERO);
+            camRepository.save(cam);
+            
+            return savedUser;
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("Failed to create user: " + ex.getMessage());
+        }
+    }
+
+    private User createUserHelper(CreateUserRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setSurname(request.getSurname());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        return user;
+    }
 
     @Override
-    public User updateUser() {
-        return null;
-    };
+    public User updateUser(UpdateUserRequest request, Long userId) {
+        try {
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+            user = updateUserHelper(user, request);
+
+            return userRepository.save(user);
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("Failed to update user: " + ex.getMessage());
+        }
+        
+    }
+
+    private User updateUserHelper(User user, UpdateUserRequest request) {
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getSurname() != null) {
+            user.setSurname(request.getSurname());
+        }
+        if (request.getUsername() != null) {
+            user.setUsername(request.getUsername());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.getIsEmailVerified() != null) {
+            user.setEmailVerified(request.getIsEmailVerified());
+        }
+        if (request.getLastLogin() != null) {
+            user.setLastLogin(request.getLastLogin());
+        }
+        if (request.getCam() != null) {
+            user.setCam(request.getCam());
+        }
+        if (request.getDeadlines() != null) {
+            user.setDeadlines(request.getDeadlines());
+        }
+        if (request.getUserModules() != null) {
+            user.setUserModules(request.getUserModules());
+        }
+        // incomplete: add other fields as necessary
+        return user;
+    }
 
     @Override
     public void deleteUser() {
         // no code yet
-    };
+    }
 }
