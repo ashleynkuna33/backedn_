@@ -1,5 +1,6 @@
 package com.uwc_cam_champion.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -9,11 +10,12 @@ public class Cam {
 
     @Id
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "actual_cam", precision = 5, scale = 2)
@@ -35,8 +37,8 @@ public class Cam {
     }
 
     // Getters and Setters
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

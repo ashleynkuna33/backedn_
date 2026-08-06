@@ -22,17 +22,18 @@ public class UserService implements IUserService {
         this.camRepository = camRepository;
     }
 
+    // checked
     @Override
-    public User createUser(CreateUserRequest request) {
+    public UserResponse createUser(CreateUserRequest request) {
         try {
             User user = createUserHelper(request);
             User savedUser = userRepository.save(user);
-            
-            // Initialize Cam record with default values
+
             Cam cam = new Cam(savedUser, BigDecimal.ZERO, new BigDecimal("50.00"), BigDecimal.ZERO);
             camRepository.save(cam);
-            
-            return savedUser;
+            savedUser.setCam(cam);
+
+            return mapToResponse(savedUser);
         } catch (Exception ex) {
             throw new ResourceNotFoundException("Failed to create user: " + ex.getMessage());
         }
@@ -48,18 +49,20 @@ public class UserService implements IUserService {
         return user;
     }
 
+    // checked
     @Override
-    public User updateUser(UpdateUserRequest request, Long userId) {
+    public UserResponse updateUser(UpdateUserRequest request, Long userId) {
         try {
-            User user = userRepository.findById(userId)
+            User user = userRepository
+                .findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
             user = updateUserHelper(user, request);
 
-            return userRepository.save(user);
+            return mapToResponse(userRepository.save(user));
         } catch (Exception ex) {
             throw new ResourceNotFoundException("Failed to update user: " + ex.getMessage());
         }
-        
+
     }
 
     private User updateUserHelper(User user, UpdateUserRequest request) {
@@ -94,8 +97,29 @@ public class UserService implements IUserService {
         return user;
     }
 
+    // checked
     @Override
-    public void deleteUser() {
-        // no code yet
+    public void deleteUser(Long userId) {
+        try {
+            User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+            userRepository.delete(user);
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException("Failed to delete user: " + ex.getMessage());
+        }
+    }
+
+    private UserResponse mapToResponse(User user) {
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setName(user.getName());
+        response.setSurname(user.getSurname());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setIsEmailVerified(user.getEmailVerified());
+        response.setPhone(user.getPhone());
+        response.setActive(user.getActive());
+        return response;
     }
 }
