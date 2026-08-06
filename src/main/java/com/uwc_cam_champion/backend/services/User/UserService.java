@@ -1,6 +1,7 @@
 package com.uwc_cam_champion.backend.services.User;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 import com.uwc_cam_champion.backend.exceptions.ResourceNotFoundException;
@@ -24,6 +25,7 @@ public class UserService implements IUserService {
 
     // checked
     @Override
+    @Transactional
     public UserResponse createUser(CreateUserRequest request) {
         try {
             User user = createUserHelper(request);
@@ -51,6 +53,7 @@ public class UserService implements IUserService {
 
     // checked
     @Override
+    @Transactional
     public UserResponse updateUser(UpdateUserRequest request, Long userId) {
         try {
             User user = userRepository
@@ -99,6 +102,7 @@ public class UserService implements IUserService {
 
     // checked
     @Override
+    @Transactional
     public void deleteUser(Long userId) {
         try {
             User user = userRepository

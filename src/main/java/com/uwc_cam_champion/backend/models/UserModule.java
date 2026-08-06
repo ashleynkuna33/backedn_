@@ -23,7 +23,7 @@ public class UserModule {
     private ModuleInfo moduleInfo;
 
     @Column(name = "current_cam", precision = 5, scale = 2)
-    private BigDecimal currentCam;
+    private BigDecimal currentCam = new BigDecimal("0.00");
 
     @Column(name = "is_completed", nullable = false)
     private Boolean isCompleted = false;
