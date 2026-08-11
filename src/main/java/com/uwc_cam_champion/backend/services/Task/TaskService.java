@@ -1,37 +1,58 @@
 package com.uwc_cam_champion.backend.services.Task;
 
-import com.uwc_cam_champion.backend.models.Task;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.uwc_cam_champion.backend.models.Task;
+import com.uwc_cam_champion.backend.repositories.TaskRepository;
+
+@Service
 public class TaskService implements ITaskService {
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
     
     @Override
     public List<Task> getAllTasksByModuleId(Long moduleId) {
-
-/* I would start by fetching all task module by module id  */
-
-
         return null;
     }
 
     @Override
     public Task getTaskById(Long taskId) {
-        return null;
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
     }
 
     @Override
     public Task createTask(Task task) {
-        return null;
+        return taskRepository.save(task);
     }
 
     @Override
     public Task updateTask(Long taskId, Task task) {
-        return null;
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        existingTask.setModuleInfo(task.getModuleInfo());
+        existingTask.setType(task.getType());
+        existingTask.setName(task.getName());
+        existingTask.setSubName(task.getSubName());
+        existingTask.setDueDate(task.getDueDate());
+        existingTask.setTaskWeight(task.getTaskWeight());
+        existingTask.setCategoryWeight(task.getCategoryWeight());
+
+        return taskRepository.save(existingTask);
     }
 
     @Override
     public void deleteTask(Long taskId) {
-        // no code yet
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        taskRepository.delete(existingTask);
     }
     
 }
