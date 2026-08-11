@@ -2,9 +2,12 @@ package com.uwc_cam_champion.backend.services.Task;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.uwc_cam_champion.backend.models.Task;
 import com.uwc_cam_champion.backend.repositories.TaskRepository;
 
+@Service
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
 
