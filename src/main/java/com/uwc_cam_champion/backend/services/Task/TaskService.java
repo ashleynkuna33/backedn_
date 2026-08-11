@@ -7,6 +7,10 @@ public class TaskService implements ITaskService {
     
     @Override
     public List<Task> getAllTasksByModuleId(Long moduleId) {
+
+/* I would start by fetching all task module by module id  */
+
+
         return null;
     }
 

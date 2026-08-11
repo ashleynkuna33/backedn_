@@ -15,9 +15,7 @@ public class CamService implements ICamService {
     private final CamRepository camRepository;
     private final UserRepository userRepository;
 
-    public CamService(
-            CamRepository camRepository,
-            UserRepository userRepository) {
+    public CamService(  CamRepository camRepository,UserRepository userRepository) { // constructor 
 
         this.camRepository = camRepository;
         this.userRepository = userRepository;
@@ -37,10 +35,7 @@ public class CamService implements ICamService {
 
         cam.setUser(user);
 
-        cam.setActualCam(
-                request.getActualCam() != null
-                        ? request.getActualCam()
-                        : new BigDecimal("0.00")
+        cam.setActualCam(  request.getActualCam() != null ? request.getActualCam() : new BigDecimal("0.00")
         );
 
         cam.setTargetCam(
