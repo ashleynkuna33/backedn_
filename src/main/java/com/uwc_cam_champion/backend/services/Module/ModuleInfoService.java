@@ -35,7 +35,7 @@ public class ModuleInfoService implements IModuleInfoService{
     @Override
     public ModuleInfo addModule(Long creatorId,AddModuleRequest request) {
 
-        User user = userRepository.findById(creatorId).orElseThrow(() -> new RuntimeException("User not found with creatorId :" +creatorId));
+        User user = userRepository.findById(creatorId).orElseThrow(() -> new ResourceNotFoundException("User not found with creatorId :" +creatorId));
 
 
         ModuleInfo module = new ModuleInfo(); 
@@ -51,15 +51,20 @@ public class ModuleInfoService implements IModuleInfoService{
 
 
     @Override
-    public ModuleInfo updateModule(Long creatorId, UpdateModuleRequest request) {
+    public ModuleInfo updateModule(Long moduleId, UpdateModuleRequest request) {
 
-        ModuleInfo moduleInfo = moduleInfoRepository.findById(creatorId).orElseThrow(() -> new ResourceNotFoundException("Module not found with creatorId :" +creatorId));
+        ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow(() -> new ResourceNotFoundException("Module not found with moduleId :" +moduleId));
+
+        
+        if(!moduleInfo.getId().equals(moduleId)){
+            throw new IllegalArgumentException("Task does not belong in this module  with moduleId :" + moduleId);
+        }
 
         applyModuleInfo(moduleInfo, request);
 
         return moduleInfoRepository.save(moduleInfo);
 
-    };
+    }
 
     @Override
     public void deleteModule(Long moduleId, DeleteModuleRequest request ) { 
@@ -67,7 +72,7 @@ public class ModuleInfoService implements IModuleInfoService{
         ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow(() -> new ResourceNotFoundException(" ModuleInfo not found with moduleId :"+ moduleId));
         
         moduleInfoRepository.delete(moduleInfo);
-    };
+    }
 
     @Override
     public Task addTask(Long moduleId, AddTaskRequest request) {
@@ -75,20 +80,78 @@ public class ModuleInfoService implements IModuleInfoService{
         ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow( () ->
          new ResourceNotFoundException(" ModuleInfo not found with moduleId :" + moduleId));
 
+         
+        if(!moduleInfo.getId().equals(moduleId)){
+            throw new IllegalArgumentException("Task does not belong in this module  with moduleId :" + moduleId);
+        }
+
          Task task = new Task();
+         task.setModuleInfo(moduleInfo);
          applyTaskInfo(task, request);
 
          return taskRepository.save(task);
-    };
+    }
 
     @Override
     public Task updateTask(Long taskId, UpdateTaskRequest request) {
-        return null;
-    };
+
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found with taskId :" + taskId));
+
+        
+        if(!task.getModuleInfo().getId().equals(taskId)){
+            throw new IllegalArgumentException("Task does not belong in this module  with taskId :" + taskId);
+        }
+
+        applyTaskInfo(task, request);
+
+        return taskRepository.save(task);
+        
+    }
 
     @Override
-    public void deleteTask(Long moduleId, Long taskId, DeleteTaskRequest request) {
-        // no code yet
-    };
+    public void deleteTask(Long moduleId, Long taskId) {
+        
+        
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found with taskId :" + taskId));
+
+        if(!task.getModuleInfo().getId().equals(moduleId)){
+            throw new IllegalArgumentException("Task does not belong in this module  with moduleId :" + moduleId);
+        }
+
+        taskRepository.delete(task);
+    }
+
+      private void applyModuleInfo(ModuleInfo module, AddModuleRequest request) {
+                module.setTitle(request.getTitle());
+                
+                     module.setDescription(request.getDescription());
+
+            }
+
+        private void  applyModuleInfo(ModuleInfo module, UpdateModuleRequest request) {
+
+                module.setTitle(request.getTitle());
+
+                module.setDescription(request.getDescription());
+            
+                }
+
+       private void   applyTaskInfo(Task task, AddTaskRequest request) {
+
+                task.setType( request.getType());
+
+                task.setDescription( request.getDescription());
+            
+        }
+
+      private void applyTaskInfo (Task task, UpdateTaskRequest request) {
+
+        task.setType(request.getType());
+           task.setDescription(request.getDescription());
+    
+        }
+
+
+  
 
 }

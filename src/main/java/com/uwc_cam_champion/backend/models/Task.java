@@ -35,10 +35,13 @@ public class Task {
     @Column(name = "category_weight", precision = 5, scale = 2)
     private BigDecimal categoryWeight;
 
+    @Column(name ="description", nullable = true, length =500)
+    private String description;
+
     // Constructors
     public Task() {}
 
-    public Task(ModuleInfo moduleInfo, String type, String name, String subName, LocalDate dueDate, BigDecimal taskWeight, BigDecimal categoryWeight) {
+    public Task(ModuleInfo moduleInfo, String type, String name, String subName, LocalDate dueDate, BigDecimal taskWeight, BigDecimal categoryWeight, String description) {
         this.moduleInfo = moduleInfo;
         this.type = type;
         this.name = name;
@@ -46,6 +49,7 @@ public class Task {
         this.dueDate = dueDate;
         this.taskWeight = taskWeight;
         this.categoryWeight = categoryWeight;
+        this.description =description;
     }
 
     // Getters & Setters
@@ -111,5 +115,13 @@ public class Task {
 
     public void setCategoryWeight(BigDecimal categoryWeight) {
         this.categoryWeight = categoryWeight;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

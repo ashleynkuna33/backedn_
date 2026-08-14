@@ -13,7 +13,7 @@ public interface IModuleInfoService {
 
     Task addTask(Long moduleId, AddTaskRequest request);
     Task updateTask(Long taskId,UpdateTaskRequest request);
-    void deleteTask(Long moduleId, Long taskId, DeleteTaskRequest request);
+    void deleteTask(Long moduleId, Long taskId);
     
 
 }

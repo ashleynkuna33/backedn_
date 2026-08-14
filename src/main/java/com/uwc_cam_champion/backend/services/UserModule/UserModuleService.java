@@ -1,6 +1,8 @@
 package com.uwc_cam_champion.backend.services.UserModule;
 
 import java.util.List;
+
+
 import com.uwc_cam_champion.backend.models.ModuleInfo;
 import com.uwc_cam_champion.backend.models.User;
 import com.uwc_cam_champion.backend.models.UserModule;
@@ -13,6 +15,7 @@ public class UserModuleService implements IUserModule {
     private final UserModuleRepository userModuleRepository;
     private final UserRepository userRepository;
     private final ModuleInfoRepository moduleInfoRepository;
+    
 
     public UserModuleService(UserModuleRepository userModuleRepository, UserRepository userRepository, ModuleInfoRepository moduleInfoRepository) {
         this.userModuleRepository = userModuleRepository;
@@ -53,5 +56,21 @@ public class UserModuleService implements IUserModule {
             throw new RuntimeException("Failed to leave module with id: " + moduleId + " for user with id: " + userId, ex);
         }
     }
+
+    @Override
+public UserModule getModuleInfo(Long userId, Long moduleId) {
+    try {
+        ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId)
+            .orElseThrow(() -> new RuntimeException("Module not found with id: " + moduleId));
+
+        return userModuleRepository.findByUserId(userId).stream()
+            .filter(um -> um.getModuleInfo().getId().equals(moduleInfo.getId()))
+            .findFirst().orElseThrow(() -> new RuntimeException("UserModule not found for user: " + userId));
+
+    } catch (Exception ex) {
+
+        throw new RuntimeException("Failed to get module info for module id: " + moduleId + " and user id: " + userId, ex);
+    }
+}
 
 }
