@@ -20,6 +20,10 @@ public class DashboardResponse {
         return actualCam;
     }
 
+    public void setActualCam(BigDecimal actualCam) {
+        this.actualCam = actualCam;
+    }
+
     public int getModulesAdded() {
         return modulesAdded;
     }
