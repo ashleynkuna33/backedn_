@@ -1,11 +1,11 @@
 package com.uwc_cam_champion.backend.services.Dashboard;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.math.RoundingMode;
-import java.util.stream.Collectors;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -16,8 +16,8 @@ import com.uwc_cam_champion.backend.repositories.CamRepository;
 import com.uwc_cam_champion.backend.repositories.DeadlineRepository;
 import com.uwc_cam_champion.backend.repositories.UserModuleRepository;
 import com.uwc_cam_champion.backend.request.Dashboard.DashboardResponse;
-import com.uwc_cam_champion.backend.request.Dashboard.ModuleCard;
 import com.uwc_cam_champion.backend.request.Dashboard.DeadlineResponse;
+import com.uwc_cam_champion.backend.request.Dashboard.ModuleResponse;
 
 
 
@@ -45,7 +45,7 @@ public class DashboardService {
 
         response.setModulesAdded(userModules.size());
 
-        List<ModuleCard> moduleCards = userModules.stream().map(this::toModuleCard).collect(Collectors.toList());
+        List<ModuleResponse> moduleCards = userModules.stream().map(this::toModuleResponse).collect(Collectors.toList());
 
         response.setModuleCards(moduleCards);
 
@@ -57,7 +57,7 @@ public class DashboardService {
         return response;
     
     }
-    private ModuleCard toModuleCard(UserModule userModule) {
+    private ModuleResponse toModuleResponse(UserModule userModule) {
         BigDecimal camValue = userModule.getCurrentCam();
         int progress = camValue.setScale(0, RoundingMode.HALF_UP).intValue();
 
@@ -76,7 +76,7 @@ public class DashboardService {
         }
 
 
-        return new ModuleCard(
+        return new ModuleResponse(
             userModule.getId(),
             userModule.getModuleInfo().getTitle(), //display name
             userModule.getModuleInfo().getName(), // display code

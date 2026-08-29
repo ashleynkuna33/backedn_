@@ -11,12 +11,12 @@ public class DashboardResponse {
 
     private List<ModuleResponse> modules;
     private List<DeadlineResponse> deadlines;
-    private List<ModuleCard> moduleCards;
+    private List<ModuleResponse> moduleCards;
 
-    public List<ModuleCard> getModuleCards() {
+    public List<ModuleResponse> getModuleCards() {
         return moduleCards;
     }
-    public void setModuleCards(List<ModuleCard> moduleCards) {
+    public void setModuleCards(List<ModuleResponse> moduleCards) {
         this.moduleCards = moduleCards;
     }
     public  DashboardResponse(){
