@@ -11,7 +11,14 @@ public class DashboardResponse {
 
     private List<ModuleResponse> modules;
     private List<DeadlineResponse> deadlines;
+    private List<ModuleCard> moduleCards;
 
+    public List<ModuleCard> getModuleCards() {
+        return moduleCards;
+    }
+    public void setModuleCards(List<ModuleCard> moduleCards) {
+        this.moduleCards = moduleCards;
+    }
     public  DashboardResponse(){
 
     }
