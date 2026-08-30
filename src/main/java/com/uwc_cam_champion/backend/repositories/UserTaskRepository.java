@@ -9,4 +9,5 @@ import com.uwc_cam_champion.backend.models.UserTask;
 public interface UserTaskRepository extends JpaRepository<UserTask, Long> {
     List<UserTask> findByUserModule_ModuleInfo_Id(Long moduleId);
     List<UserTask> findByTask_Id(Long taskId);
+    List<UserTask> findByUserModule_User_Id(Long userId);
 }

@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 import com.uwc_cam_champion.backend.models.Cam;
 import com.uwc_cam_champion.backend.models.Deadline;
 import com.uwc_cam_champion.backend.models.UserModule;
+import com.uwc_cam_champion.backend.models.UserTask;
 import com.uwc_cam_champion.backend.repositories.CamRepository;
 import com.uwc_cam_champion.backend.repositories.DeadlineRepository;
 import com.uwc_cam_champion.backend.repositories.UserModuleRepository;
+import com.uwc_cam_champion.backend.repositories.UserTaskRepository;
 import com.uwc_cam_champion.backend.request.Dashboard.DashboardResponse;
 import com.uwc_cam_champion.backend.request.Dashboard.DeadlineResponse;
 import com.uwc_cam_champion.backend.request.Dashboard.ModuleResponse;
+import com.uwc_cam_champion.backend.request.Dashboard.TaskStats;
 
 
 
@@ -26,11 +29,13 @@ public class DashboardService {
     private final CamRepository camRepository;
     private final UserModuleRepository userModuleRepository;
     private final DeadlineRepository deadlineRepository;
+    private final UserTaskRepository userTaskRepository;
 
-    public DashboardService(CamRepository camRepository, UserModuleRepository userModuleRepository, DeadlineRepository deadlineRepository) {
+    public DashboardService(CamRepository camRepository, UserModuleRepository userModuleRepository, DeadlineRepository deadlineRepository, UserTaskRepository userTaskRepository) {
         this.camRepository = camRepository;
         this.userModuleRepository = userModuleRepository;
         this.deadlineRepository = deadlineRepository;
+        this.userTaskRepository = userTaskRepository;
     }
 
     public DashboardResponse getDashboard(Long userId) {
@@ -53,6 +58,23 @@ public class DashboardService {
         List<DeadlineResponse> deadlineResponses = deadlines.stream().limit(4).map(this::toDeadlineResponse).collect(Collectors.toList());
 
         response.setDeadlines(deadlineResponses);
+
+        List<UserTask> userTasks = userTaskRepository.findByUserModule_User_Id(userId);
+
+        long completedCount = userTasks.stream()
+                .filter(t -> Boolean.TRUE.equals(t.getIsCompleted()))
+                .count();
+
+        long inProgressCount = userTasks.stream()
+                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() != null)
+                .count();
+
+        long notStartedCount = userTasks.stream()
+                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() == null)
+                .count();
+
+        response.setStats(new TaskStats(inProgressCount, completedCount, notStartedCount));
+
 
         return response;
     
