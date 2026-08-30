@@ -9,5 +9,7 @@ public interface IUserModule {
     UserModule joinModule(Long userId, Long moduleId);
     void leaveModule(Long userId, Long moduleId);
     UserModule getModuleInfo(Long userId , Long moduleId);
+
+    
     
 }

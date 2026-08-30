@@ -15,11 +15,11 @@ import com.uwc_cam_champion.backend.models.Task;
 import com.uwc_cam_champion.backend.services.Task.TaskService;
 
 @RestController
-@RequestMapping
-public class taskController {
+@RequestMapping("/api") // fixed: was missing entirely, so routes lived at /tasks/... instead of /api/tasks/...
+public class TaskController {
    private final TaskService taskService;
 
-    public taskController(TaskService taskService) {
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
