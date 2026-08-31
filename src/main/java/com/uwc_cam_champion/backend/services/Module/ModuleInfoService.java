@@ -20,9 +20,6 @@ public class ModuleInfoService implements IModuleInfoService{
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
-  
-
-
 
     public ModuleInfoService(ModuleInfoRepository moduleInfoRepository,UserRepository userRepository,TaskRepository taskRepository){
 
@@ -30,7 +27,6 @@ public class ModuleInfoService implements IModuleInfoService{
         this.userRepository =userRepository;
         this.taskRepository = taskRepository;
     }
-
 
     @Override
     public ModuleInfo addModule(Long creatorId,AddModuleRequest request) {
