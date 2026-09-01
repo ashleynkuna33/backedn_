@@ -10,6 +10,7 @@ import com.uwc_cam_champion.backend.request.Dashboard.DashboardResponse;
 import com.uwc_cam_champion.backend.services.Dashboard.DashboardService;
 
 @RestController
+
 @RequestMapping("/api/dashboard")
 @CrossOrigin(origins = "http://localhost:5173/") // Allow requests from the frontend
 public class DashboardController {
