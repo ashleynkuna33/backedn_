@@ -1,7 +1,5 @@
 package com.uwc_cam_champion.backend.services.Dashboard;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -9,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.uwc_cam_champion.backend.models.Cam;
 import com.uwc_cam_champion.backend.models.Deadline;
 import com.uwc_cam_champion.backend.models.UserModule;
 import com.uwc_cam_champion.backend.models.UserTask;
@@ -39,75 +36,53 @@ public class DashboardService {
     }
 
     public DashboardResponse getDashboard(Long userId) {
-        Cam cam = camRepository.findById(userId).orElse(null);
         DashboardResponse response = new DashboardResponse();
 
-        response.setActualCam(
-            cam != null ? cam.getActualCam() : java.math.BigDecimal.ZERO
-        );
+        // CAM summary card
+        camRepository.findById(userId).ifPresent(cam ->
+            response.setActualCam(cam.getActualCam()));
 
+        // Modules + per-module task stats
         List<UserModule> userModules = userModuleRepository.findByUserId(userId);
+        List<ModuleResponse> modules = userModules.stream().map(um -> {
+            List<UserTask> tasks = userTaskRepository.findByUserModule_User_Id(um.getId());
+            TaskStats stats = computeTaskStats(tasks);
 
-        response.setModulesAdded(userModules.size());
+            ModuleResponse mr = new ModuleResponse();
+            mr.setId(um.getId());
+            mr.setName(um.getModuleInfo().getTitle());
+            mr.setCode(um.getModuleInfo().getName());
+            mr.setCredits(um.getModuleInfo().getCredits());
+            mr.setExamDate(um.getModuleInfo().getExamDate());
+            mr.setScore(um.getCurrentCam());
+            mr.setTaskStats(stats);
+            return mr;
+        }).collect(Collectors.toList());
+        response.setModules(modules);
+        response.setModuleCards(modules);
+        response.setModulesAdded(modules.size());
 
-        List<ModuleResponse> moduleCards = userModules.stream().map(this::toModuleResponse).collect(Collectors.toList());
-
-        response.setModuleCards(moduleCards);
-
-        List<Deadline> deadlines = deadlineRepository.findByUserIdOrderByDueDateAsc(userId);
-        List<DeadlineResponse> deadlineResponses = deadlines.stream().limit(4).map(this::toDeadlineResponse).collect(Collectors.toList());
-
-        response.setDeadlines(deadlineResponses);
-
-        List<UserTask> userTasks = userTaskRepository.findByUserModule_User_Id(userId);
-
-        long completedCount = userTasks.stream()
-                .filter(t -> Boolean.TRUE.equals(t.getIsCompleted()))
-                .count();
-
-        long inProgressCount = userTasks.stream()
-                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() != null)
-                .count();
-
-        long notStartedCount = userTasks.stream()
-                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() == null)
-                .count();
-
-        response.setStats(new TaskStats(inProgressCount, completedCount, notStartedCount));
-
+        // Deadlines (via teammate's repo)
+        response.setDeadlines(deadlineRepository.findByUserIdOrderByDueDateAsc(userId).stream()
+            .limit(4)
+            .map(this::toDeadlineResponse)
+            .collect(Collectors.toList()));
 
         return response;
-    
     }
-    private ModuleResponse toModuleResponse(UserModule userModule) {
-        BigDecimal camValue = userModule.getCurrentCam();
-        int progress = camValue.setScale(0, RoundingMode.HALF_UP).intValue();
-
-        String status;
-        String statusColor;
-
-        if (camValue.compareTo(new BigDecimal("75")) >= 0) {
-            status = "Excellent";
-            statusColor = "#0ea5e9"; // Blue
-        } else if (camValue.compareTo(new BigDecimal("50")) >= 0) {
-            status = "On Track";
-            statusColor = "#10b981"; // Green
-        } else {
-            status = "At Risk";
-            statusColor = "#f97316"; // Red
-        }
-
-
-        return new ModuleResponse(
-            userModule.getId(),
-            userModule.getModuleInfo().getTitle(), //display name
-            userModule.getModuleInfo().getName(), // display code
-            camValue,
-            progress,
-            status,
-            statusColor
-        );
+    private TaskStats computeTaskStats(List<UserTask> tasks) {
+        long completed = tasks.stream()
+                .filter(t -> Boolean.TRUE.equals(t.getIsCompleted()))
+                .count();
+        long inProgress = tasks.stream()
+                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() != null)
+                .count();
+        long notStarted = tasks.stream()
+                .filter(t -> !Boolean.TRUE.equals(t.getIsCompleted()) && t.getMark() == null)
+                .count();
+        return new TaskStats(inProgress, completed, notStarted);
     }
+
     private DeadlineResponse toDeadlineResponse(Deadline deadline) {
         LocalDate dueLocalDate = deadline.getDueDate().toLocalDate();
 
