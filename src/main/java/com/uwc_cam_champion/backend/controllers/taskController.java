@@ -12,15 +12,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uwc_cam_champion.backend.models.Task;
+import com.uwc_cam_champion.backend.request.moduleinfo.UserTaskSummaryResponse;
+import com.uwc_cam_champion.backend.services.Module.UserModuleQueryService;
 import com.uwc_cam_champion.backend.services.Task.TaskService;
 
 @RestController
 @RequestMapping("/api") // fixed: was missing entirely, so routes lived at /tasks/... instead of /api/tasks/...
 public class TaskController {
    private final TaskService taskService;
+   private final UserModuleQueryService userModuleQueryService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, UserModuleQueryService userModuleQueryService) {
         this.taskService = taskService;
+        this.userModuleQueryService = userModuleQueryService;
+    }
+
+    // Fixes the GET /api/tasks/user/{userId} 404 that was wiping every
+    // login (see UserContext.jsx's loadUserData). Template-only, no marks —
+    // matches this controller's existing pattern (see getTaskById below).
+    @GetMapping("/tasks/user/{userId}")
+    public List<UserTaskSummaryResponse> getAllTasksByUserId(@PathVariable Long userId) {
+        return userModuleQueryService.getTasksForUser(userId);
     }
 
     @GetMapping("/tasks/module/{moduleId}")
