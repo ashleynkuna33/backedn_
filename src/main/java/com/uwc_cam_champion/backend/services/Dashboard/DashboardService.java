@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uwc_cam_champion.backend.models.Deadline;
 import com.uwc_cam_champion.backend.models.UserModule;
@@ -35,6 +36,7 @@ public class DashboardService {
         this.userTaskRepository = userTaskRepository;
     }
 
+    @Transactional(readOnly = true)
     public DashboardResponse getDashboard(Long userId) {
         DashboardResponse response = new DashboardResponse();
 

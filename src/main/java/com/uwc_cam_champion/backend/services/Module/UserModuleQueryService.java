@@ -13,7 +13,7 @@ import com.uwc_cam_champion.backend.repositories.UserModuleRepository;
 import com.uwc_cam_champion.backend.request.moduleinfo.UserModuleSummaryResponse;
 import com.uwc_cam_champion.backend.request.moduleinfo.UserTaskSummaryResponse;
 
-@Service
+@Service                                                                                                                                                                                                                          
 public class UserModuleQueryService {
 
     private final UserModuleRepository userModuleRepository;
