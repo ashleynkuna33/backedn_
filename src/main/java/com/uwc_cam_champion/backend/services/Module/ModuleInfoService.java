@@ -34,7 +34,7 @@ public class ModuleInfoService implements IModuleInfoService{
         User user = userRepository.findById(creatorId).orElseThrow(() -> new ResourceNotFoundException("User not found with creatorId :" +creatorId));
 
 
-        ModuleInfo module = new ModuleInfo(); 
+        ModuleInfo module = new ModuleInfo();
 
         applyModuleInfo(module,  request);
 
@@ -51,7 +51,7 @@ public class ModuleInfoService implements IModuleInfoService{
 
         ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow(() -> new ResourceNotFoundException("Module not found with moduleId :" +moduleId));
 
-        
+
         if(!moduleInfo.getId().equals(moduleId)){
             throw new IllegalArgumentException("Task does not belong in this module  with moduleId :" + moduleId);
         }
@@ -63,29 +63,29 @@ public class ModuleInfoService implements IModuleInfoService{
     }
 
     @Override
-    public void deleteModule(Long moduleId, DeleteModuleRequest request ) { 
-       
+    public void deleteModule(Long moduleId, DeleteModuleRequest request ) {
+
         ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow(() -> new ResourceNotFoundException(" ModuleInfo not found with moduleId :"+ moduleId));
-        
+
         moduleInfoRepository.delete(moduleInfo);
     }
 
     @Override
     public Task addTask(Long moduleId, AddTaskRequest request) {
-        
-        ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow( () ->
-         new ResourceNotFoundException(" ModuleInfo not found with moduleId :" + moduleId));
 
-         
+        ModuleInfo moduleInfo = moduleInfoRepository.findById(moduleId).orElseThrow( () ->
+                new ResourceNotFoundException(" ModuleInfo not found with moduleId :" + moduleId));
+
+
         if(!moduleInfo.getId().equals(moduleId)){
             throw new IllegalArgumentException("Task does not belong in this module  with moduleId :" + moduleId);
         }
 
-         Task task = new Task();
-         task.setModuleInfo(moduleInfo);
-         applyTaskInfo(task, request);
+        Task task = new Task();
+        task.setModuleInfo(moduleInfo);
+        applyTaskInfo(task, request);
 
-         return taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ModuleInfoService implements IModuleInfoService{
 
         Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found with taskId :" + taskId));
 
-        
+
         if(!task.getModuleInfo().getId().equals(taskId)){
             throw new IllegalArgumentException("Task does not belong in this module  with taskId :" + taskId);
         }
@@ -101,13 +101,13 @@ public class ModuleInfoService implements IModuleInfoService{
         applyTaskInfo(task, request);
 
         return taskRepository.save(task);
-        
+
     }
 
     @Override
     public void deleteTask(Long moduleId, Long taskId) {
-        
-        
+
+
         Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found with taskId :" + taskId));
 
         if(!task.getModuleInfo().getId().equals(moduleId)){
@@ -117,37 +117,37 @@ public class ModuleInfoService implements IModuleInfoService{
         taskRepository.delete(task);
     }
 
-      private void applyModuleInfo(ModuleInfo module, AddModuleRequest request) {
-                module.setTitle(request.getTitle());
-                
-                     module.setDescription(request.getDescription());
+    private void applyModuleInfo(ModuleInfo module, AddModuleRequest request) {
+        module.setTitle(request.getTitle());
 
-            }
+        module.setDescription(request.getDescription());
 
-        private void  applyModuleInfo(ModuleInfo module, UpdateModuleRequest request) {
+    }
 
-                module.setTitle(request.getTitle());
+    private void  applyModuleInfo(ModuleInfo module, UpdateModuleRequest request) {
 
-                module.setDescription(request.getDescription());
-            
-                }
+        module.setTitle(request.getTitle());
 
-       private void   applyTaskInfo(Task task, AddTaskRequest request) {
+        module.setDescription(request.getDescription());
 
-                task.setType( request.getType());
+    }
 
-                task.setDescription( request.getDescription());
-            
-        }
+    private void   applyTaskInfo(Task task, AddTaskRequest request) {
 
-      private void applyTaskInfo (Task task, UpdateTaskRequest request) {
+        task.setType( request.getType());
+
+        task.setDescription( request.getDescription());
+
+    }
+
+    private void applyTaskInfo (Task task, UpdateTaskRequest request) {
 
         task.setType(request.getType());
-           task.setDescription(request.getDescription());
-    
-        }
+        task.setDescription(request.getDescription());
+
+    }
 
 
-  
+
 
 }
