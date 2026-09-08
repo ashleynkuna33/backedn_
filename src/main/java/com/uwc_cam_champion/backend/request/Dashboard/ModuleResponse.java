@@ -1,6 +1,7 @@
 package com.uwc_cam_champion.backend.request.Dashboard;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class ModuleResponse {
     private Long id;
@@ -10,6 +11,9 @@ public class ModuleResponse {
     private int progress;
     private String status;
     private String statusColor;
+    private int credits;
+    private LocalDate examDate;
+    private TaskStats taskStats;
 
     public ModuleResponse(){
 
@@ -79,5 +83,29 @@ public class ModuleResponse {
 
     public void setStatusColor(String statusColor) {
         this.statusColor = statusColor;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+
+    public LocalDate getExamDate() {
+        return examDate;
+    }
+
+    public void setExamDate(LocalDate examDate) {
+        this.examDate = examDate;
+    }
+
+    public TaskStats getTaskStats() {
+        return taskStats;
+    }
+
+    public void setTaskStats(TaskStats taskStats) {
+        this.taskStats = taskStats;
     }
 }

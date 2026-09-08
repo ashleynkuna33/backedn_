@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Enables CORS handling using the CorsConfigurationSource bean below
                 .csrf(csrf -> csrf.disable())     // Typically disabled for stateless REST APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/users/**", "/api/modules/**", "/api/tasks/**", "/api/dashboard/**", "/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
